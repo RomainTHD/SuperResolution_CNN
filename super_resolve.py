@@ -1,3 +1,5 @@
+""""Application du CNN"""
+
 from __future__ import print_function
 import argparse
 import torch
@@ -5,8 +7,6 @@ from PIL import Image
 from torchvision.transforms import ToTensor
 
 import numpy as np
-
-import os
 
 # Training settings
 parser = argparse.ArgumentParser(description='PyTorch Super Res Example')

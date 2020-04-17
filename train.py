@@ -1,3 +1,5 @@
+"""Entrainement du CNN"""
+
 from __future__ import print_function
 import argparse
 from math import log10
@@ -12,6 +14,7 @@ from data import get_training_set, get_test_set
 import os
 import shutil
 
+
 def main():
     # Training settings
     parser = argparse.ArgumentParser(description='PyTorch Super Res Example')
@@ -23,7 +26,9 @@ def main():
     parser.add_argument('--cuda', action='store_true', help='use cuda?')
     parser.add_argument('--nbThreads', type=int, default=4, help='number of threads for data loader to use')
     parser.add_argument('--seed', type=int, default=123, help='random seed to use. Default=123')
-    parser.add_argument('--noiseLimit', type=float, default=25, help="Peak signal-to-noise ratio (PSNR), précision en dB, petit = affreux, 0 pour pas de limite")
+    parser.add_argument('--noiseLimit', type=float, default=25,
+                        help="Peak signal-to-noise ratio (PSNR),"
+                             "précision en dB, petit = affreux, 0 pour pas de limite")
     opt = parser.parse_args()
 
     print(opt)
@@ -39,7 +44,8 @@ def main():
     if opt.noiseLimit == 0:
         opt.noiseLimit = float("inf")
 
-    save_dir = "saved_model_u{}_bs{}_tbs{}_lr{}".format(opt.upscaleFactor, opt.batchSize, opt.testBatchSize, opt.learningRate)
+    save_dir = "saved_model_u{}_bs{}_tbs{}_lr{}".format(opt.upscaleFactor, opt.batchSize, opt.testBatchSize,
+                                                        opt.learningRate)
 
     print("dir name :", save_dir)
 
@@ -71,8 +77,10 @@ def main():
     print('===> Loading datasets')
     train_set = get_training_set(opt.upscaleFactor)
     test_set = get_test_set(opt.upscaleFactor)
-    training_data_loader = DataLoader(dataset=train_set, num_workers=opt.nbThreads, batch_size=opt.batchSize, shuffle=True)
-    testing_data_loader = DataLoader(dataset=test_set, num_workers=opt.nbThreads, batch_size=opt.testBatchSize, shuffle=False)
+    training_data_loader = DataLoader(dataset=train_set, num_workers=opt.nbThreads, batch_size=opt.batchSize,
+                                      shuffle=True)
+    testing_data_loader = DataLoader(dataset=test_set, num_workers=opt.nbThreads, batch_size=opt.testBatchSize,
+                                     shuffle=False)
 
     print('===> Building model')
     model = Net(upscale_factor=opt.upscaleFactor).to(device)
@@ -80,36 +88,51 @@ def main():
 
     optimizer = optim.Adam(model.parameters(), lr=opt.learningRate)
 
-
     def train(epoch, logFile):
+        """
+        Entrainement
+
+        :param epoch: Itération ? TODO
+        :param logFile: Fichier où log
+        """
         epoch_loss = 0
         for iteration, batch in enumerate(training_data_loader, 1):
-            input, target = batch[0].to(device), batch[1].to(device)
+            input_pic, target_pic = batch[0].to(device), batch[1].to(device)
 
             # _accuracies, _val_accuracies = [],[]
 
             optimizer.zero_grad()
             # print(input.size())
             # print(target.size())
-            loss = criterion(model(input), target)
+            loss = criterion(model(input_pic), target_pic)
             epoch_loss += loss.item()
             loss.backward()
             optimizer.step()
-            print("===> Epoch[{}]({}/{}): Loss: {:.4f}".format(epoch, iteration, len(training_data_loader), loss.item()), file=logFile)
+            print(
+                "===> Epoch[{}]({}/{}): Loss: {:.4f}".format(epoch, iteration, len(training_data_loader), loss.item()),
+                file=logFile)
 
             # _accuracies.append(loss.detach())
 
-        print("===> Epoch {} Complete: Avg. Loss: {:.4f}".format(epoch, epoch_loss / len(training_data_loader)), file=logFile)
-
+        print("===> Epoch {} Complete: Avg. Loss: {:.4f}".format(epoch, epoch_loss / len(training_data_loader)),
+              file=logFile)
 
     def test(logFile):
+        """
+        Teste le CNN
+
+        :param logFile: Fichier où log
+
+        :return: PSNR moyen
+        """
+
         avg_psnr = 0
         with torch.no_grad():
             for batch in testing_data_loader:
-                input, target = batch[0].to(device), batch[1].to(device)
+                input_pic, target_pic = batch[0].to(device), batch[1].to(device)
 
-                prediction = model(input)
-                mse = criterion(prediction, target)
+                prediction = model(input_pic)
+                mse = criterion(prediction, target_pic)
                 psnr = 10 * log10(1 / mse.item())
                 avg_psnr += psnr
         print("===> Avg. PSNR: {:.4f} dB".format(avg_psnr / len(testing_data_loader)), file=logFile)
@@ -117,6 +140,13 @@ def main():
         return avg_psnr / len(testing_data_loader)
 
     def checkpoint(epoch, save_dir):
+        """
+        Sauvegarde l'état du CNN dans un fichier .pth
+
+        :param epoch: Itération ? TODO
+        :param save_dir: Dossier de sauvegarde
+        """
+
         model_out_path = save_dir + "/model_epoch_{}.pth".format(epoch)
         torch.save(model, model_out_path)
         print("Checkpoint saved to {}".format(model_out_path))
@@ -146,6 +176,7 @@ def main():
     else:
         print("epoch atteint")
         print("epoch atteint", file=logFile)
+
 
 if __name__ == "__main__":
     main()

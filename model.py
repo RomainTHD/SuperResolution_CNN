@@ -1,19 +1,24 @@
-import torch
+"""Modèle du CNN"""
+
 import torch.nn as nn
 import torch.nn.init as init
 
 
 class Net(nn.Module):
+    """Réseau CNN"""
+
     def __init__(self, upscale_factor):
         """Initialisation
 
-        @param upscale_factor int Facteur d'échelle"""
+        :param upscale_factor: Facteur d'échelle
+        """
 
         super(Net, self).__init__()
 
         # Fonction pour le forward
         self.relu = nn.ReLU()
 
+        # TODO arguments suivant ?
         # On part de 1 bloc qu'on divise en 64 masques de blocs 5*5
         self.conv1 = nn.Conv2d(1, 64, (5, 5), (1, 1), (2, 2))
 
@@ -26,12 +31,18 @@ class Net(nn.Module):
         # Puis (upscale_factor ** 2) masques de blocs 3*3
         self.conv4 = nn.Conv2d(32, upscale_factor ** 2, (3, 3), (1, 1), (1, 1))
 
+        # TODO
         self.pixel_shuffle = nn.PixelShuffle(upscale_factor)
 
         self._initialize_weights()
 
     def forward(self, x):
-        """Avance au cycle suivant"""
+        """Avance au cycle suivant
+
+        :param x: TODO
+
+        :return: TODO
+        """
 
         # print("forward 1", x.size())
         x = self.relu(self.conv1(x))
@@ -46,6 +57,8 @@ class Net(nn.Module):
         return x
 
     def _initialize_weights(self):
+        """Initialise les poids"""
+
         init.orthogonal_(self.conv1.weight, init.calculate_gain('relu'))
         init.orthogonal_(self.conv2.weight, init.calculate_gain('relu'))
         init.orthogonal_(self.conv3.weight, init.calculate_gain('relu'))

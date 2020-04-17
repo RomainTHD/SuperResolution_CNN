@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="c0d04ee1-0134-452a-a5a4-f6676009b14d" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/data.py" beforeDir="false" afterPath="$PROJECT_DIR$/data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/dataset.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/super_resolve.py" beforeDir="false" afterPath="$PROJECT_DIR$/super_resolve.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1afjPJifIRhJZC0RqijGwlG3Vbh" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+      <module name="VISI401_SuperResolution_CNN" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c0d04ee1-0134-452a-a5a4-f6676009b14d" name="Default Changelist" comment="" />
+      <created>1587133516662</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1587133516662</updated>
+      <workItem from="1587133520060" duration="209000" />
+      <workItem from="1587133737525" duration="138000" />
+      <workItem from="1587133885385" duration="1818000" />
+      <workItem from="1587135859187" duration="45000" />
+      <workItem from="1587135920779" duration="1494000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="2" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="651" y="254" key="#Inspections" timestamp="1587136604516">
+      <screen x="0" y="0" width="2048" height="1152" />
+    </state>
+    <state x="651" y="254" key="#Inspections/0.0.2048.1152/2560.405.1024.819@0.0.2048.1152" timestamp="1587136604516" />
+    <state x="479" y="231" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1587134229335">
+      <screen x="0" y="0" width="2048" height="1152" />
+    </state>
+    <state x="479" y="231" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.2048.1152/2560.405.1024.819@0.0.2048.1152" timestamp="1587134229335" />
+    <state x="778" y="445" key="#com.intellij.ide.actions.ChooseComponentsToExportDialog" timestamp="1587133727021">
+      <screen x="0" y="0" width="2048" height="1152" />
+    </state>
+    <state x="778" y="445" key="#com.intellij.ide.actions.ChooseComponentsToExportDialog/0.0.2048.1152/2560.405.1024.819@0.0.2048.1152" timestamp="1587133727021" />
+    <state x="805" y="317" key="FileChooserDialogImpl" timestamp="1587136194283">
+      <screen x="0" y="0" width="2048" height="1152" />
+    </state>
+    <state x="805" y="317" key="FileChooserDialogImpl/0.0.2048.1152/2560.405.1024.819@0.0.2048.1152" timestamp="1587136194283" />
+    <state x="398" y="199" width="1304" height="710" key="SettingsEditor" timestamp="1587136246014">
+      <screen x="0" y="0" width="2048" height="1152" />
+    </state>
+    <state x="398" y="199" width="1304" height="710" key="SettingsEditor/0.0.2048.1152/2560.405.1024.819@0.0.2048.1152" timestamp="1587136246014" />
+  </component>
+</project>

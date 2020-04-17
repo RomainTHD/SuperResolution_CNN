@@ -1,5 +1,9 @@
-*
-!*.py
+__pycache__
+saved_model_*
+dataset
+pixelart/*
+*.png
+*.jpg
 !*.sh
-!.gitignore
 !*.md
+!.idea/*
