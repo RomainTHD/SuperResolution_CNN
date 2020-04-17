@@ -1,6 +1,6 @@
 #!/bin/bash
 
-EXEC=/Users/lachaud/GITHUB/misc/DGtal-CGAL/build/tv-triangulation-color
+EXEC="tv-triangulation-color"
 ZOOM="$1"
 INPUT="input/*.png"
 OUTDIR="output-x${ZOOM}"

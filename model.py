@@ -5,26 +5,44 @@ import torch.nn.init as init
 
 class Net(nn.Module):
     def __init__(self, upscale_factor):
+        """Initialisation
+
+        @param upscale_factor int Facteur d'échelle"""
+
         super(Net, self).__init__()
 
+        # Fonction pour le forward
         self.relu = nn.ReLU()
 
-        # 64 masques de blocs 5*5
+        # On part de 1 bloc qu'on divise en 64 masques de blocs 5*5
         self.conv1 = nn.Conv2d(1, 64, (5, 5), (1, 1), (2, 2))
 
         # on refait 64 masques de blocs 3*3
         self.conv2 = nn.Conv2d(64, 64, (3, 3), (1, 1), (1, 1))
+
+        # Puis 32 masques de blocs 3*3
         self.conv3 = nn.Conv2d(64, 32, (3, 3), (1, 1), (1, 1))
+
+        # Puis (upscale_factor ** 2) masques de blocs 3*3
         self.conv4 = nn.Conv2d(32, upscale_factor ** 2, (3, 3), (1, 1), (1, 1))
+
         self.pixel_shuffle = nn.PixelShuffle(upscale_factor)
 
         self._initialize_weights()
 
     def forward(self, x):
+        """Avance au cycle suivant"""
+
+        # print("forward 1", x.size())
         x = self.relu(self.conv1(x))
+        # print("forward 2", x.size())
         x = self.relu(self.conv2(x))
+        # print("forward 3", x.size())
         x = self.relu(self.conv3(x))
+        # print("forward 4", x.size())
         x = self.pixel_shuffle(self.conv4(x))
+        # print("forward 5", x.size())
+
         return x
 
     def _initialize_weights(self):

@@ -1,5 +1,5 @@
-__pycache__
-dataset
-saved_model_*
-out
-*.jpg
+*
+!*.py
+!*.sh
+!.gitignore
+!*.md

@@ -86,13 +86,18 @@ def main():
         for iteration, batch in enumerate(training_data_loader, 1):
             input, target = batch[0].to(device), batch[1].to(device)
 
+            # _accuracies, _val_accuracies = [],[]
+
             optimizer.zero_grad()
+            # print(input.size())
+            # print(target.size())
             loss = criterion(model(input), target)
             epoch_loss += loss.item()
             loss.backward()
             optimizer.step()
-
             print("===> Epoch[{}]({}/{}): Loss: {:.4f}".format(epoch, iteration, len(training_data_loader), loss.item()), file=logFile)
+
+            # _accuracies.append(loss.detach())
 
         print("===> Epoch {} Complete: Avg. Loss: {:.4f}".format(epoch, epoch_loss / len(training_data_loader)), file=logFile)
 
