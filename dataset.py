@@ -4,6 +4,7 @@ from os import listdir
 from os.path import join
 from PIL import Image
 
+from random import shuffle
 
 def is_image_file(filename):
     """
@@ -33,20 +34,49 @@ def load_img(filepath):
 class DatasetFromFolder(data.Dataset):
     """Dataset contenant les images"""
 
-    def __init__(self, image_dir, input_transform=None, target_transform=None):
+    def __init__(self, image_dir, input_transform=None, target_transform=None, limit=None):
         """
         Constructeur
 
         :param image_dir: Dossier d'images
         :param input_transform: Transformation à appliquer sur chaque entrée
         :param target_transform: Transformation à appliquer sur chaque cible
+        :param limit: Limite du nombre de fichiers
         """
 
         super(DatasetFromFolder, self).__init__()
-        self.image_filenames = [join(image_dir, x) for x in listdir(image_dir) if is_image_file(x)]
 
-        self.input_transform = input_transform
-        self.target_transform = target_transform
+        input_dir = image_dir + "/input"
+        target_dir = image_dir + "/target"
+
+        input_filenames = [x for x in listdir(input_dir) if is_image_file(x)]
+        target_filenames = [x for x in listdir(target_dir) if is_image_file(x)]
+
+        image_filenames = []
+
+        for name in input_filenames:
+            if name in target_filenames and name not in image_filenames:
+                image_filenames.append(name)
+
+        for name in target_filenames:
+            if name in input_filenames and name not in image_filenames:
+                image_filenames.append(name)
+
+        shuffle(image_filenames)
+
+        if limit is not None:
+            image_filenames = image_filenames[:limit]
+
+        self.images = []
+
+        for name in image_filenames:
+            input_pic = load_img(join(input_dir, name))
+            target_pic = load_img(join(target_dir, name))
+
+            input_pic = input_transform(input_pic)
+            target_pic = target_transform(target_pic)
+
+            self.images.append((input_pic, target_pic))
 
     def __getitem__(self, index):
         """
@@ -57,14 +87,7 @@ class DatasetFromFolder(data.Dataset):
         :return: Image
         """
 
-        input_pic = load_img(self.image_filenames[index])
-        target_pic = input_pic.copy()
-        if self.input_transform:
-            input_pic = self.input_transform(input_pic)
-        if self.target_transform:
-            target_pic = self.target_transform(target_pic)
-
-        return input_pic, target_pic
+        return self.images[index]
 
     def __len__(self):
         """
@@ -73,4 +96,4 @@ class DatasetFromFolder(data.Dataset):
         :return: Taille
         """
 
-        return len(self.image_filenames)
+        return len(self.images)

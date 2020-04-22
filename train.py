@@ -19,9 +19,9 @@ def main():
     # Training settings
     parser = argparse.ArgumentParser(description='PyTorch Super Res Example')
     parser.add_argument('--upscaleFactor', type=int, required=True, help="super resolution upscale factor")
-    parser.add_argument('--batchSize', type=int, default=64, help='training batch size')
+    parser.add_argument('--batchSize', type=int, default=16, help='training batch size')
     parser.add_argument('--testBatchSize', type=int, default=10, help='testing batch size')
-    parser.add_argument('--nbEpochs', type=int, default=100, help='number of epochs to train for, 0 pour pas de limite')
+    parser.add_argument('--nbEpochs', type=int, default=50, help='number of epochs to train for, 0 pour pas de limite')
     parser.add_argument('--learningRate', type=float, default=0.01, help='Learning Rate. Default=0.01')
     parser.add_argument('--cuda', action='store_true', help='use cuda?')
     parser.add_argument('--nbThreads', type=int, default=4, help='number of threads for data loader to use')
@@ -75,10 +75,12 @@ def main():
     device = torch.device("cuda" if opt.cuda else "cpu")
 
     print('===> Loading datasets')
-    train_set = get_training_set(opt.upscaleFactor)
-    test_set = get_test_set(opt.upscaleFactor)
+    train_set = get_training_set(opt.upscaleFactor, "dataset")
+    test_set = get_test_set(opt.upscaleFactor, "dataset")
+
     training_data_loader = DataLoader(dataset=train_set, num_workers=opt.nbThreads, batch_size=opt.batchSize,
                                       shuffle=True)
+
     testing_data_loader = DataLoader(dataset=test_set, num_workers=opt.nbThreads, batch_size=opt.testBatchSize,
                                      shuffle=False)
 
@@ -139,15 +141,22 @@ def main():
 
         return avg_psnr / len(testing_data_loader)
 
-    def checkpoint(epoch, save_dir):
+    def checkpoint(epoch, save_dir, last=False):
         """
         Sauvegarde l'état du CNN dans un fichier .pth
 
         :param epoch: Itération ? TODO
         :param save_dir: Dossier de sauvegarde
+        :param last: Si ce checkpoint est le dernier ou non
         """
 
-        model_out_path = save_dir + "/model_epoch_{}.pth".format(epoch)
+        model_out_path = save_dir
+
+        if last:
+            model_out_path += "/model_epoch_last.pth"
+        else:
+            model_out_path += "/model_epoch_{}.pth".format(epoch)
+
         torch.save(model, model_out_path)
         print("Checkpoint saved to {}".format(model_out_path))
 
@@ -167,6 +176,8 @@ def main():
         if avg_psnr >= opt.noiseLimit:
             out_because_of_psnr = True
             break
+
+    checkpoint(None, save_dir, True)
 
     logFile = open(save_dir + "/model_epoch_end.log", 'w')
 

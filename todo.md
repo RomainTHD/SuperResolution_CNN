@@ -30,3 +30,6 @@ c'est le but du CNN, et du coup il se plante quand les données sont linéaires 
 
 
 Essayer de créer un CNN qui va dire si telle image est pixel art ou non ?
+
+
+Problème de couleurs

@@ -21,3 +21,5 @@ for file in all_files:
                      "out/out_" + file.replace(".pth", "") + ".png"])
 
 # python super_resolve.py --input_image input.jpg --model saved_model_u3_bs64_tbs10_lr1.0/model_epoch_1.pth --output_filename out/out_1.png
+
+# python super_resolve.py --inputPath dataset/input/spr_alphys_r_3.png --modelPath saved_model_u4_bs16_tbs10_lr0.01/model_epoch_last.pth

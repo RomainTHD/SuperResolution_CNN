@@ -1,9 +1,11 @@
 __pycache__
 saved_model_*
-dataset
+dataset*
 pixelart/*
-*.png
+*.zip
 *.jpg
+*.png
 !*.sh
 !*.md
+!*.py
 !.idea/*

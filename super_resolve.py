@@ -12,7 +12,7 @@ import numpy as np
 parser = argparse.ArgumentParser(description='PyTorch Super Res Example')
 parser.add_argument('--inputPath', type=str, required=True, help='input image to use')
 parser.add_argument('--modelPath', type=str, required=True, help='model file to use')
-parser.add_argument('--outputPath', type=str, help='where to save the output image')
+parser.add_argument('--outputPath', type=str, default="out.png", help='where to save the output image')
 parser.add_argument('--cuda', action='store_true', help='use cuda')
 opt = parser.parse_args()
 
@@ -50,4 +50,4 @@ out_img_cr = cr.resize(out_img_y.size, Image.BICUBIC)
 out_img = Image.merge('YCbCr', [out_img_y, out_img_cb, out_img_cr]).convert('RGB')
 
 out_img.save(opt.outputPath)
-print('output image saved to ', opt.output_filename)
+print('output image saved to', opt.outputPath)
