@@ -60,7 +60,7 @@ def get_training_set(upscale_factor, root_dir):
 
     crop_size = calculate_valid_crop_size(256, upscale_factor)
 
-    print(crop_size)
+    print("Crop size :", crop_size)
 
     return DatasetFromFolder(root_dir,
                              input_transform=input_transform(crop_size),

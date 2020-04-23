@@ -6,6 +6,7 @@ from PIL import Image
 
 from random import shuffle
 
+
 def is_image_file(filename):
     """
     Si un fichier est une image ou nom
@@ -18,16 +19,22 @@ def is_image_file(filename):
     return any(filename.endswith(extension) for extension in [".png", ".jpg", ".jpeg"])
 
 
-def load_img(filepath):
+def load_img(filepath, transform):
     """
     Charge une image en mode YCbCr
 
     :param filepath: Chemin de l'image à charger
+    :param transform: Transformation à effectuer
 
     :return: La composante Y de l'image
     """
     img = Image.open(filepath).convert('YCbCr')
     y, _, _ = img.split()
+
+    y = transform(y)
+
+    y *= 256.0
+
     return y
 
 
@@ -70,11 +77,8 @@ class DatasetFromFolder(data.Dataset):
         self.images = []
 
         for name in image_filenames:
-            input_pic = load_img(join(input_dir, name))
-            target_pic = load_img(join(target_dir, name))
-
-            input_pic = input_transform(input_pic)
-            target_pic = target_transform(target_pic)
+            input_pic = load_img(join(input_dir, name), input_transform)
+            target_pic = load_img(join(target_dir, name), target_transform)
 
             self.images.append((input_pic, target_pic))
 

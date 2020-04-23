@@ -1,6 +1,8 @@
+.idea
 __pycache__
 saved_model_*
 dataset*
+test
 pixelart/*
 *.zip
 *.jpg
@@ -8,4 +10,3 @@ pixelart/*
 !*.sh
 !*.md
 !*.py
-!.idea/*
