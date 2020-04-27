@@ -6,14 +6,14 @@ import torch
 from PIL import Image
 from torchvision.transforms import ToTensor
 
-import sys
-
 import numpy as np
 
 # Training settings
 parser = argparse.ArgumentParser(description='PyTorch Super Res Example')
 parser.add_argument('--inputPath', type=str, required=True, help='input image to use')
-parser.add_argument('--modelPath', type=str, required=True, help='model file to use')
+parser.add_argument('--modelPathR', type=str, required=True, help='model file to use')
+parser.add_argument('--modelPathG', type=str, required=True, help='model file to use')
+parser.add_argument('--modelPathB', type=str, required=True, help='model file to use')
 parser.add_argument('--outputPath', type=str, default="out.png", help='where to save the output image')
 parser.add_argument('--cuda', action='store_true', help='use cuda')
 opt = parser.parse_args()
@@ -29,34 +29,45 @@ except FileExistsError:
     pass
 """
 
-img_faux = Image.open("test/target.png").convert('YCbCr')
-y_faux, cb_faux, cr_faux = img_faux.split()
+img = Image.open(opt.inputPath).convert("RGB")
+r, g, b = img.split()
 
-img = Image.open(opt.inputPath).convert('YCbCr')
-y, cb, cr = img.split()
+model_all = [torch.load(x) for x in (opt.modelPathR, opt.modelPathG, opt.modelPathB)]
 
-model = torch.load(opt.modelPath)
 img_to_tensor = ToTensor()
-input_img = img_to_tensor(y).view(1, -1, y.size[1], y.size[0])
 
-if opt.cuda:
-    model = model.cuda()
-    input_img = input_img.cuda()
-else:
-    model = model.cpu()
-    input_img = input_img.cpu()
+input_img_all = [img_to_tensor(x).view(1, -1, x.size[1], x.size[0]) for x in (r, g, b)]
 
-out = model(input_img)
-out = out.cpu()
-out_img_y = out[0].detach().numpy()
-out_img_y = out_img_y[0]
-out_img_y *= 256.0
-out_img_y = out_img_y.clip(0, 255)
-out_img_y = Image.fromarray(np.uint8(out_img_y), mode='L')
+for i in range(len(model_all)):
+    if opt.cuda:
+        model_all[i] = model_all[i].cuda()
+    else:
+        model_all[i] = model_all[i].cpu()
 
-out_img_cb = cb.resize(out_img_y.size, Image.ANTIALIAS)
-out_img_cr = cr.resize(out_img_y.size, Image.ANTIALIAS)
-out_img = Image.merge('YCbCr', [out_img_y, out_img_cb, out_img_cr]).convert('RGB')
+for i in range(len(input_img_all)):
+    if opt.cuda:
+        input_img_all[i] = input_img_all[i].cuda()
+    else:
+        input_img_all[i] = input_img_all[i].cpu()
+
+out_all = []
+
+for i in range(len(model_all)):
+    model = model_all[i]
+    input_img = input_img_all[i]
+
+    out = model(input_img)
+    out = out.cpu()
+
+    out_img_y = out[0].detach().numpy()
+    out_img_y = out_img_y[0]
+    out_img_y *= 256.0
+    out_img_y = out_img_y.clip(0, 255)
+    out_img_y = Image.fromarray(np.uint8(out_img_y), mode='L')
+
+    out_all.append(out_img_y)
+
+out_img = Image.merge("RGB", out_all)
 
 out_img.save(opt.outputPath)
 print('output image saved to', opt.outputPath)

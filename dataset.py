@@ -19,29 +19,35 @@ def is_image_file(filename):
     return any(filename.endswith(extension) for extension in [".png", ".jpg", ".jpeg"])
 
 
-def load_img(filepath, transform):
+def load_img(filepath, transform, on_r=False, on_g=False, on_b=False):
     """
-    Charge une image en mode YCbCr
+    Charge une image en mode RGB
 
+    :param on_r:
+    :param on_g:
+    :param on_b:
     :param filepath: Chemin de l'image à charger
     :param transform: Transformation à effectuer
 
     :return: La composante Y de l'image
     """
-    img = Image.open(filepath).convert('YCbCr')
-    y, _, _ = img.split()
+    img = Image.open(filepath).convert('RGB')
+    r, g, b = img.split()
 
-    y = transform(y)
-
-    y *= 256.0
-
-    return y
+    if on_r:
+        return transform(r)*256.0
+    elif on_g:
+        return transform(g)*256.0
+    elif on_b:
+        return transform(b)*256.0
+    else:
+        raise AttributeError("Pas d'option sélectionnée")
 
 
 class DatasetFromFolder(data.Dataset):
     """Dataset contenant les images"""
 
-    def __init__(self, image_dir, input_transform=None, target_transform=None, limit=None):
+    def __init__(self, image_dir, colorSpace, input_transform=None, target_transform=None, limit=None):
         """
         Constructeur
 
@@ -77,8 +83,8 @@ class DatasetFromFolder(data.Dataset):
         self.images = []
 
         for name in image_filenames:
-            input_pic = load_img(join(input_dir, name), input_transform)
-            target_pic = load_img(join(target_dir, name), target_transform)
+            input_pic = load_img(join(input_dir, name), input_transform, *colorSpace)
+            target_pic = load_img(join(target_dir, name), target_transform, *colorSpace)
 
             self.images.append((input_pic, target_pic))
 
