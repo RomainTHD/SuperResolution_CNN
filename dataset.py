@@ -1,5 +1,7 @@
 import torch.utils.data as data
 
+import torch
+
 from os import listdir
 from os.path import join
 from PIL import Image
@@ -19,35 +21,31 @@ def is_image_file(filename):
     return any(filename.endswith(extension) for extension in [".png", ".jpg", ".jpeg"])
 
 
-def load_img(filepath, transform, on_r=False, on_g=False, on_b=False):
+def load_img(filepath, transform):
     """
     Charge une image en mode RGB
 
-    :param on_r:
-    :param on_g:
-    :param on_b:
     :param filepath: Chemin de l'image à charger
     :param transform: Transformation à effectuer
 
     :return: La composante Y de l'image
     """
-    img = Image.open(filepath).convert('RGB')
-    r, g, b = img.split()
 
-    if on_r:
-        return transform(r)*256.0
-    elif on_g:
-        return transform(g)*256.0
-    elif on_b:
-        return transform(b)*256.0
-    else:
-        raise AttributeError("Pas d'option sélectionnée")
+    img = Image.open(filepath).convert('RGBA')
+    r, g, b, a = img.split()
+
+    r = transform(r) * 256.0
+    g = transform(g) * 256.0
+    b = transform(b) * 256.0
+
+    return torch.cat((r, g, b), 1)
 
 
 class DatasetFromFolder(data.Dataset):
     """Dataset contenant les images"""
 
-    def __init__(self, image_dir, colorSpace, input_transform=None, target_transform=None, limit=None):
+    # def __init__(self, image_dir, input_transform=None, target_transform=None, limit=None):
+    def __init__(self, image_dir, input_transform=None, target_transform=None, limit=None):
         """
         Constructeur
 
@@ -68,11 +66,7 @@ class DatasetFromFolder(data.Dataset):
         image_filenames = []
 
         for name in input_filenames:
-            if name in target_filenames and name not in image_filenames:
-                image_filenames.append(name)
-
-        for name in target_filenames:
-            if name in input_filenames and name not in image_filenames:
+            if name in target_filenames:
                 image_filenames.append(name)
 
         shuffle(image_filenames)
@@ -83,8 +77,8 @@ class DatasetFromFolder(data.Dataset):
         self.images = []
 
         for name in image_filenames:
-            input_pic = load_img(join(input_dir, name), input_transform, *colorSpace)
-            target_pic = load_img(join(target_dir, name), target_transform, *colorSpace)
+            input_pic = load_img(join(input_dir, name), input_transform)
+            target_pic = load_img(join(target_dir, name), target_transform)
 
             self.images.append((input_pic, target_pic))
 

@@ -48,7 +48,7 @@ def target_transform(crop_size, upscale_factor):
     ])
 
 
-def get_training_set(upscale_factor, root_dir, colorSpace):
+def get_training_set(upscale_factor, root_dir):
     """
     Récupère le set d'images pour l'entrainement
 
@@ -62,14 +62,13 @@ def get_training_set(upscale_factor, root_dir, colorSpace):
 
     print("Crop size :", crop_size)
 
-    return DatasetFromFolder(root_dir,
-                             colorSpace,
+    return DatasetFromFolder(image_dir=root_dir,
                              input_transform=input_transform(crop_size),
                              target_transform=target_transform(crop_size, upscale_factor),
                              limit=200)
 
 
-def get_test_set(upscale_factor, root_dir, colorSpace):
+def get_test_set(upscale_factor, root_dir):
     """
     Récupère le set d'images pour le test
 
@@ -81,8 +80,7 @@ def get_test_set(upscale_factor, root_dir, colorSpace):
 
     crop_size = calculate_valid_crop_size(256, upscale_factor)
 
-    return DatasetFromFolder(root_dir,
-                             colorSpace,
+    return DatasetFromFolder(image_dir=root_dir,
                              input_transform=input_transform(crop_size),
                              target_transform=target_transform(crop_size, upscale_factor),
                              limit=200)

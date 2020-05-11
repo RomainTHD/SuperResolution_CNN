@@ -15,17 +15,8 @@ import os
 import shutil
 
 
-def main(opt, save_dir, r=False, g=False, b=False):
-    if r:
-        letter = "r"
-    elif g:
-        letter = "g"
-    elif b:
-        letter = "b"
-    else:
-        raise AttributeError("Pas d'option sélectionnée")
-
-    f = open(save_dir + "/args_{}.cfg".format(letter), 'w')
+def main(opt, save_dir):
+    f = open(save_dir + "/args.cfg", 'w')
     print(opt, file=f)
     f.close()
 
@@ -34,8 +25,10 @@ def main(opt, save_dir, r=False, g=False, b=False):
     device = torch.device("cuda" if opt.cuda else "cpu")
 
     print('===> Loading datasets')
-    train_set = get_training_set(opt.upscaleFactor, "dataset", (r, g, b))
-    test_set = get_test_set(opt.upscaleFactor, "dataset", (r, g, b))
+    train_set = get_training_set(opt.upscaleFactor, "dataset")
+    test_set = get_test_set(opt.upscaleFactor, "dataset")
+
+    print(train_set[0])
 
     training_data_loader = DataLoader(dataset=train_set, num_workers=opt.nbThreads, batch_size=opt.batchSize,
                                       shuffle=True)
@@ -63,8 +56,6 @@ def main(opt, save_dir, r=False, g=False, b=False):
             # _accuracies, _val_accuracies = [],[]
 
             optimizer.zero_grad()
-            # print(input.size())
-            # print(target.size())
             loss = criterion(model(input_pic), target_pic)
             epoch_loss += loss.item()
             loss.backward()
@@ -112,9 +103,9 @@ def main(opt, save_dir, r=False, g=False, b=False):
         model_out_path = save_dir
 
         if last:
-            model_out_path += "/model_epoch_last_{}.pth".format(letter)
+            model_out_path += "/model_epoch_last.pth"
         else:
-            model_out_path += "/model_epoch_{}_{}.pth".format(epoch, letter)
+            model_out_path += "/model_epoch_{}.pth".format(epoch)
 
         torch.save(model, model_out_path)
         print("Checkpoint saved to {}".format(model_out_path))
@@ -122,7 +113,7 @@ def main(opt, save_dir, r=False, g=False, b=False):
     out_because_of_psnr = False
 
     for epoch in range(1, opt.nbEpochs + 1):
-        logFile = open(save_dir + "/model_epoch_{}_{}.log".format(epoch, letter), 'w')
+        logFile = open(save_dir + "/model_epoch_{}.log".format(epoch), 'w')
 
         train(epoch, logFile)
         avg_psnr = test(logFile)
@@ -138,7 +129,7 @@ def main(opt, save_dir, r=False, g=False, b=False):
 
     checkpoint(None, save_dir, True)
 
-    logFile = open(save_dir + "/model_epoch_end_{}.log".format(letter), 'w')
+    logFile = open(save_dir + "/model_epoch_end.log", 'w')
 
     if out_because_of_psnr:
         print("PSNR atteint")
@@ -199,14 +190,8 @@ if __name__ == "__main__":
 
     os.mkdir(save_dir)
 
-    main(opt, save_dir, r=True)
-    print("R OK")
-
-    main(opt, save_dir, g=True)
-    print("G OK")
-
-    main(opt, save_dir, b=True)
-    print("B OK")
+    main(opt, save_dir)
+    print("OK")
 
 # python main.py --upscale_factor 3 --batchSize 4 --testBatchSize 100 --nEpochs 100 --lr 0.001
 

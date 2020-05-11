@@ -1,5 +1,6 @@
 """Modèle du CNN"""
 
+import torch
 import torch.nn as nn
 import torch.nn.init as init
 
@@ -39,10 +40,10 @@ class Net(nn.Module):
     def forward(self, x):
         """Avance au cycle suivant
 
-        :param x: TODO
-
         :return: TODO
         """
+
+        # x = torch.cat((r, g, b), 1)
 
         # print("forward 1", x.size())
         x = self.relu(self.conv1(x))
