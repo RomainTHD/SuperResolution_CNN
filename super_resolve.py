@@ -29,10 +29,10 @@ except FileExistsError:
     pass
 """
 
-img = Image.open(opt.inputPath).convert("RGB")
-r, g, b = img.split()
+img = Image.open(opt.inputPath).convert("RGBA")
+r, g, b, a = img.split()
 
-model_all = [torch.load(x) for x in (opt.modelPathR, opt.modelPathG, opt.modelPathB)]
+model_all = [torch.load(x) for x in (opt.modelPathR, opt.modelPathR, opt.modelPathR)]
 
 img_to_tensor = ToTensor()
 
@@ -53,16 +53,15 @@ for i in range(len(input_img_all)):
 out_all = []
 
 for i in range(len(model_all)):
-    model = model_all[i]
-    input_img = input_img_all[i]
-
-    out = model(input_img)
+    out = (model_all[i])(input_img_all[i])
     out = out.cpu()
 
     out_img_y = out[0].detach().numpy()
     out_img_y = out_img_y[0]
-    out_img_y *= 256.0
+
+    out_img_y *= 255.0
     out_img_y = out_img_y.clip(0, 255)
+
     out_img_y = Image.fromarray(np.uint8(out_img_y), mode='L')
 
     out_all.append(out_img_y)
