@@ -1,55 +1,64 @@
 # Super-résolution via CNN
 
+<b>DISCLAIMER :</b><br>
+Ce programme a un énorme bug qui n'a aucun sens.<br>
+L'entrainement génère 3 modèles, un pour chaque channel, en tout cas en théorie.<br>
+En pratique, il s'avère que les modèles G et B ne servent pas, et qu'il faut appliquer le modèle R sur les 3 channels (?!?).<br>
+Et retirer les 2 entrainements superflus réduit la qualité de l'image, alors qu'ils sont censés être autonomes.<br>
+
 ### Entrainement
 ```
 Entrainement: train.py
 
 Arguments:
-  -h, --help                        Message d'aide
-  --upscaleFactor     ! REQUIS      Facteur de super résolution
-  --batchSize           16          Taille du batch d'entrainement
-  --testBatchSize       10          Taille du batch de test
-  --nbEpochs            50          Nombre de simulations max. 0 pour désactiver la limite
-  --learningRate        0.01        Taux d'apprentissage
-  --cuda                            Utilise la puissance GPU via Cuda (forcé à True pour l'instant)
-  --nbThreads           4           Nombre de Threads pour le chargement de la data
-  --seed                123         Seed à utiliser pour l'aléatoire
-  --noiseLimit          25          PSNR, Précision en dB, haut = précis, 0 = pas de limite
+  -h, --help                            Message d'aide
+  -u, --upscaleFactor     ! REQUIS      Facteur de super-résolution
+  --batchSize               16          Taille du batch d'entrainement
+  --testBatchSize           10          Taille du batch de test
+  --nbEpochs                50          Nombre de simulations max. 0 pour désactiver la limite
+  --learningRate            0.01        Taux d'apprentissage
+  --cpu                                 Utilise le CPU et non le GPU / CUDA
+  --nbThreads               4           Nombre de threads pour le data loader
+  --seed                                Seed utilisée pour l'aléatoire
+  --noiseLimit              25          Peak signal-to-noise ratio (PSNR), détermine la précision du modèle en dB, 0 = pas de limite. PSNR élevé = modèle précis
+  -q, --quiet                           Silencieux
 ```
 
-Générera des fichiers model_epoch_`n`.pth correspondant au modèle à l'époque `n`,
-dans un dossier saved_model_u`2`_bs`64`_tbs`10`_lr`0.01` par exemple, où `2` correspond au facteur d'échelle, `64` à la taille du batch d'entrainement, `10` la taille du batch de test et `0.01` au taux d'apprentissage.
+Générera des fichiers "model_epoch_`n`.pth" correspondant au modèle à l'epoch `n`,
+dans un dossier saved_model_u`t`_bs`bs`_tbs`tbs`_lr`lr`,
+où `t` correspond au facteur d'échelle,
+`bs` à la taille du batch d'entrainement,
+`tbs` la taille du batch de test
+et `lr` au taux d'apprentissage.
 
-[//]: # (This example trains a super-resolution network on the , using crops from the 200 training images, and evaluating on crops of the 100 test images. A snapshot of the model after every epoch with filename model_epoch_<epoch_number>.pth)
+Les images low res doivent être situées dans un dossier "dataset/input",
+et les cibles high res dans un dossier "dataset/target",
+où chaque image de qualité différente a le même nom dans les 2 dossiers.
 
 #### Exemple :
 `python train.py --upscaleFactor 4 --nbEpochs 20`
-
-[//]: # (`python main.py --upscale_factor 3 --batchSize 4 --testBatchSize 100 --nEpochs 30 --lr 0.001`)
 
 ### Super-résolution
 ```
 Super-résolution: super_resolve.py
 
 Arguments:
-  -h, --help                        Message d'aide
-  --inputPath         ! REQUIS      Image d'entrée
-  --modelPath         ! REQUIS      Modèle à utiliser
-  --outputPath          out.png     Image de sortie
-  --cuda                            Utilise la puissance GPU via Cuda (forcé à True pour l'instant)
+  -h, --help                            Message d'aide
+  -i, --inputPath         ! REQUIS      Image d'entrée
+  -m, --modelPath         ! REQUIS      Modèle .pth à utiliser
+  -o, --outputPath          out.png     Image de sortie
+      --cpu                             Utilise le CPU et non le GPU / CUDA
+  -q, --quiet                           Silencieux
 ```
 
 #### Exemple :
-`python super_resolve.py --inputPath dataset/input/spr_alphys_r_3.png --modelPath saved_model_u4_bs16_tbs10_lr0.01/model_epoch_last.pth`
-
-[//]: # (`python super_resolve.py --input_image dataset/BSDS300/images/test/16077.jpg --model model_epoch_500.pth --output_filename out.png`)
+`python super_resolve.py --inputPath pomme.png --modelPath model.pth --outputPath pomme_x4.png`
 
 <hr>
 
 ### Licence
 
-CC BY-NC-SA 4.0 <br>
-Creative Commons Attribution - Pas d’Utilisation Commerciale - Partage dans les Mêmes Conditions 4.0 International
+GPLv3
 
 <hr>
 

@@ -13,6 +13,7 @@ from data import get_training_set, get_test_set
 
 import os
 import shutil
+import random
 
 
 def main(opt, save_dir, r=False, g=False, b=False):
@@ -29,9 +30,13 @@ def main(opt, save_dir, r=False, g=False, b=False):
     print(opt, file=f)
     f.close()
 
+    if opt.seed == 0:
+        opt.seed = random.randrange(10**9)
+
+    random.seed(opt.seed)
     torch.manual_seed(opt.seed)
 
-    device = torch.device("cuda" if opt.cuda else "cpu")
+    device = torch.device("cpu" if opt.cpu else "cuda")
 
     print('===> Loading datasets')
     train_set = get_training_set(opt.upscaleFactor, "dataset", (r, g, b))
@@ -149,27 +154,30 @@ def main(opt, save_dir, r=False, g=False, b=False):
 
 
 if __name__ == "__main__":
-    # Training settings
-    parser = argparse.ArgumentParser(description='PyTorch Super Res Example')
-    parser.add_argument('--upscaleFactor', type=int, required=True, help="super resolution upscale factor")
-    parser.add_argument('--batchSize', type=int, default=16, help='training batch size')
-    parser.add_argument('--testBatchSize', type=int, default=10, help='testing batch size')
-    parser.add_argument('--nbEpochs', type=int, default=50, help='number of epochs to train for, 0 pour pas de limite')
-    parser.add_argument('--learningRate', type=float, default=0.01, help='Learning Rate. Default=0.01')
-    parser.add_argument('--cuda', action='store_true', help='use cuda?')
-    parser.add_argument('--nbThreads', type=int, default=4, help='number of threads for data loader to use')
-    parser.add_argument('--seed', type=int, default=123, help='random seed to use. Default=123')
+    # Paramètres
+    parser = argparse.ArgumentParser(description="Entrainement du CNN")
+    parser.add_argument('-u', '--upscaleFactor', type=int, required=True, help="Facteur de super-résolution")
+    parser.add_argument('--batchSize', type=int, default=16, help="Taille du batch d'entrainement")
+    parser.add_argument('--testBatchSize', type=int, default=10, help="Taille du batch de test")
+    parser.add_argument('-n', '--nbEpochs', type=int, default=50,
+                        help="Nombre de simulations max. 0 pour désactiver la limite")
+    parser.add_argument('--learningRate', type=float, default=0.01, help="Taux d'apprentissage")
+    parser.add_argument('--cpu', action='store_true', help="Utilise le CPU et non le GPU / CUDA")
+    parser.add_argument('--nbThreads', type=int, default=4, help="Nombre de threads pour le data loader")
+    parser.add_argument('--seed', type=int, default=0, help="Seed utilisée pour l'aléatoire")
     parser.add_argument('--noiseLimit', type=float, default=25,
                         help="Peak signal-to-noise ratio (PSNR),"
-                             "précision en dB, petit = affreux, 0 pour pas de limite")
+                             "détermine la précision du modèle en dB,"
+                             "0 pour pas de limite."
+                             "PSNR élevé = modèle précis")
+    parser.add_argument('-q', '--quiet', action='store_true', help="Silencieux")
+
     opt = parser.parse_args()
 
     print(opt)
 
-    opt.cuda = True
-
-    if opt.cuda and not torch.cuda.is_available():
-        raise Exception("No GPU found, please run without --cuda")
+    if not opt.cpu and not torch.cuda.is_available():
+        raise Exception("Erreur CUDA : pas de GPU trouvée. Utilisez --cpu")
 
     if opt.nbEpochs == 0:
         opt.nbEpochs = float("inf")

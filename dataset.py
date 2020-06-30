@@ -31,8 +31,8 @@ def load_img(filepath, transform, on_r=False, on_g=False, on_b=False):
 
     :return: La composante Y de l'image
     """
-    img = Image.open(filepath).convert('RGB')
-    r, g, b = img.split()
+    img = Image.open(filepath).convert('RGBA')
+    r, g, b, a = img.split()
 
     if on_r:
         return transform(r)*256.0
