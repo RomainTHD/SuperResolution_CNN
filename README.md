@@ -6,6 +6,30 @@ L'entrainement génère 3 modèles, un pour chaque channel, en tout cas en théo
 En pratique, il s'avère que les modèles G et B ne servent pas, et qu'il faut appliquer le modèle R sur les 3 channels (?!?).<br>
 Et retirer les 2 entrainements superflus réduit la qualité de l'image, alors qu'ils sont censés être autonomes.<br>
 
+<hr>
+
+### Prérequis
+
+Tout d'abord, une carte graphique <b>Nvidia</b> (ni AMD, ni Intel intégrée) est vivement conseillée pour paralléliser le CNN.
+Il faudra alors installer CUDA. Pas de CUDA = des dizaines de fois plus lent.<br>
+
+À installer :
+- [Python 3.x](https://www.python.org/downloads/)
+- [PyTorch](https://pytorch.org)
+- [TorchVision](https://pytorch.org) (intégré à PyTorch)
+- [CUDA](https://developer.nvidia.com/cuda-downloads) (facultatif pour la résolution)
+- PIL (intégré à Python)
+- NumPy (intégré à Python)
+
+Pour générer l'image cible (via le .sh) :
+- [GTVImageVect](https://github.com/kerautret/GTVimageVect) (C++ à compiler ou binaire Linux à télécharger)
+- [ImageMagick](https://imagemagick.org/script/download.php) (Disponible via `sudo apt install imagemagick`)
+- De manière générale, un Linux, un émulateur
+ou [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10),
+le noyau Linux intégré officiellement à Windows 10
+
+<hr>
+
 ### Entrainement
 ```
 Entrainement: train.py
@@ -24,7 +48,7 @@ Arguments:
   -q, --quiet                           Silencieux
 ```
 
-Générera des fichiers "model_epoch_`n`.pth" correspondant au modèle à l'epoch `n`,
+Ce programme générera des fichiers "model_epoch_`n`.pth" correspondant au modèle à l'epoch `n`,
 dans un dossier saved_model_u`t`_bs`bs`_tbs`tbs`_lr`lr`,
 où `t` correspond au facteur d'échelle,
 `bs` à la taille du batch d'entrainement,
@@ -35,8 +59,12 @@ Les images low res doivent être situées dans un dossier "dataset/input",
 et les cibles high res dans un dossier "dataset/target",
 où chaque image de qualité différente a le même nom dans les 2 dossiers.
 
+Si le programme est trop gourmand en RAM ou en VRAM, vous pouvez régler les options --batchSize et --testBatchSize.
+
 #### Exemple :
 `python train.py --upscaleFactor 4 --nbEpochs 20`
+
+<hr>
 
 ### Super-résolution
 ```
