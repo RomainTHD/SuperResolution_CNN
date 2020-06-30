@@ -102,4 +102,6 @@ Sujet disponible [<u>ici</u>](https://www.lama.univ-savoie.fr/mediawiki/index.ph
 
 [//]: # ("Real-Time Single Image and Video Super-Resolution Using an Efficient Sub-Pixel Convolutional Neural Network" - Shi et al.)
 
+<hr>
+
 Romain THEODET, CMI INFO L2 USMB, 2019/2020
