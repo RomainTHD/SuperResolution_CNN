@@ -1,13 +1,5 @@
 # Super-résolution via CNN
 
-<b>DISCLAIMER :</b><br>
-Ce programme a un énorme bug qui n'a aucun sens.<br>
-L'entrainement génère 3 modèles, un pour chaque channel, en tout cas en théorie.<br>
-En pratique, il s'avère que les modèles G et B ne servent pas, et qu'il faut appliquer le modèle R sur les 3 channels (?!?).<br>
-Et retirer les 2 entrainements superflus réduit la qualité de l'image, alors qu'ils sont censés être autonomes.<br>
-
-<hr>
-
 ### Prérequis
 
 Tout d'abord, une carte graphique <b>Nvidia</b> (ni AMD, ni Intel intégrée) est vivement conseillée pour paralléliser le CNN.
